@@ -129,17 +129,9 @@ def search(board,depth,search_depth):
     score = evaluate(board)
     if depth > 0:
         up = search(board.move_up(),depth-1,search_depth)
-        if board.last == "u":
-            up = -1
         down = search(board.move_down(),depth-1,search_depth)
-        if board.last == "d":
-            down = -1
         left = search(board.move_left(),depth-1,search_depth)
-        if board.last == "l":
-            left == -1
         right = search(board.move_right(),depth-1,search_depth)
-        if board.last == "r":
-            right = -1
         best = up
         move = board.move_up()
         if down > best:
