@@ -179,7 +179,7 @@ def search(board,depth,search_depth):
             return best
     return score
 
-def start(search_depth = 4, size = 4):
+def start(search_depth = 3, size = 5):
     board = Board(size)
     board.generate_tile()
     turns = 0
