@@ -34,18 +34,23 @@ class Board():
         for row in self.state:
             print(row)
     def generate_tile(self):
-        flag = evaluate(self) > 0
-        while(flag):
-            x = random.randint(0,self.size-1)
-            y = random.randint(0,self.size-1)
-            if self.state[y][x].val == 0:
-                rand = random.randint(1,10)
-                if rand<10:
-                    self.state[y][x].val = 2
-                else:
-                    self.state[y][x].val = 4
-
-                flag = False
+        free = []
+        for row in self.state:
+            for tile in row:
+                if tile.val == 0:
+                    free.append(tile)
+        if len(free)>1:
+            rand = random.randint(1, len(free)-1)
+            tile = free[rand]
+        if len(free) > 0:
+            tile = free[0]
+        else:
+            return
+        rand = random.randint(1, 10)
+        if rand < 10:
+            tile.val = 2
+        else:
+            tile.val = 4
 
     #Moves start at the side tiles will be "moving" towards
     def move_up(self):
@@ -116,6 +121,25 @@ class Board():
 '''Evalutates the score of a given board'''
 def evaluate(board):
     score = 0
+    tiles = 1
+    free = 0
+    flag = False
+    for row in board.state:
+        for tile in row:
+            if tile.val == 0:
+                free += 1
+            else:
+                score += tile.val
+                tiles+=1
+            if tile.val == 2048:
+                flag = True
+    if flag:
+        return score, free
+    return score/tiles, free
+
+    '''
+    This way went alright. Solved to a size of 5*5 but needs to be a better way
+    
     for row in board.state:
         for tile in row:
             if tile.val == 0:
@@ -123,10 +147,11 @@ def evaluate(board):
             if tile.val == 2048:
                 score+=2048
     return score
+    '''
 
 '''Recursive search'''
 def search(board,depth,search_depth):
-    score = evaluate(board)
+    score = evaluate(board)[0]
     if depth > 0:
         up = search(board.move_up(),depth-1,search_depth)
         down = search(board.move_down(),depth-1,search_depth)
@@ -144,21 +169,21 @@ def search(board,depth,search_depth):
             best = right
             move = board.move_right()
         if depth == search_depth:
-            if best ==0:
-                return board
-            else:
-                #if move has no free space it might be illegal move and we should instead search at a depth of 1
-                if evaluate(move) == 0:
+            if evaluate(move)[1] == 0:
+                if search_depth > 1:
                     return search(board,1,1)
-                return move
+                else:
+                    return board
+            return move
         else:
             return best
     return score
 
-def start(search_depth = 3, size = 5):
+def start(search_depth = 4, size = 4):
     board = Board(size)
+    board.generate_tile()
     turns = 0
-    while evaluate(board)<2048:
+    while evaluate(board)[0]<2048:
         move = search(board,search_depth,search_depth)
         turns+=1
         #if move == board, no moves taken will reduce space, game is lost
