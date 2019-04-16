@@ -10,4 +10,4 @@ Moves are taken as the following steps:
 - Randomized tile of value 2 or 4 is generated on board
 - Repeat until a 2048 tile on board or no moves can be taken.
 
-This heuristic solves consistently for a 5*5 board or larger and fails consistently for a 4*4 tile board.
+This heuristic solves consistently for a 5x5 board or larger and fails consistently for a 4x4 tile board.
